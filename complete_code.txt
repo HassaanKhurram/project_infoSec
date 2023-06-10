@@ -1,0 +1,58 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Checkout') {
+      steps {
+        echo 'Checkout...'
+        checkout scmGit(branches: [[name: '*/python']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/HassaanKhurram/COMP421-A2-251684003.git']])
+        
+      }
+    }
+    
+    stage('SonarQube Scan') {
+      steps {
+        withSonarQubeEnv('SonarServer') {
+          // Run the SonarQube sensor.
+          //sh 'sonar-scanner -Dsonar.projectKey=hazrat -Dsonar.sources=hazrat.py'
+           sh 'python3 hazrat.py'
+        }
+      }
+    }
+    
+    stage('Build') {
+      steps {
+        echo 'Building...'
+        // git branch: 'python', url: 'https://github.com/HassaanKhurram/COMP421-A2-251684003/tree/python'
+        
+        // sh 'apt update && apt install python3 -y'
+        // sh 'apt install python3-pip -y'
+        sh 'python3 hazrat.py'
+      }
+    }
+    
+    // stage('SonarQube Analysis') {
+    //   steps {
+    //     withSonarQubeEnv('SonarServer') {
+    //       sh 'python3 hazrat.py'
+    //     }
+    //   }
+    // }
+
+    
+    stage('Test') {
+      steps {
+        echo 'Testing...'
+        // snykSecurity snykInstallation: 'MySnyk', snykTokenId: 'snyk-api-token'
+        
+      }
+    }
+    stage('Deploy') {
+      steps {
+        echo 'Successfully Deployed...'
+        // bat 'npm start'
+
+      }
+    }
+  }
+}
