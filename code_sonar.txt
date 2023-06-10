@@ -1,0 +1,20 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Checkout') {
+      steps {
+        echo 'Checkout...'
+        checkout scmGit(branches: [[name: '*/python']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/HassaanKhurram/COMP421-A2-251684003.git']])
+      }
+    }
+    
+    stage('SonarQube Scan') {
+      steps {
+        withSonarQubeEnv('SonarServer') {
+          sh 'sonar-scanner -Dsonar.projectKey=hazrat -Dsonar.sources=hazrat.py'
+        }
+      }
+    }
+  }
+}
