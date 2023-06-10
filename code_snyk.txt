@@ -1,0 +1,21 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Checkout') {
+      steps {
+        echo 'Checkout...'
+        checkout scmGit(branches: [[name: '*/python']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/HassaanKhurram/COMP421-A2-251684003.git']])
+      }
+    }
+    
+    stage('Snyk Test') {
+      steps {
+        withCredentials([string(credentialsId: 'snyk-api-token', variable: 'SNYK_TOKEN')]) {
+          sh 'snyk auth $SNYK_TOKEN'
+          sh 'snyk test'
+        }
+      }
+    }
+  }
+}
